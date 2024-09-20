@@ -1,9 +1,7 @@
-import encoder
-
+import encoder 
 
 def main():
-    # Call the encode function with descriptive arguments
-    encoder.encode("Glass2", "Karaoke.mp4", 0.15, .4, 20)
+    encoder.encode("Glass","Karaoke.mp4",.15,.4,20)
 
-if __name__ == "__main__":
+if __name__== "__main__":
     main()
