@@ -1,8 +1,12 @@
 import json
+from json import JSONEncoder
 import cv2 as cv
 import math
+import numpy
 import numpy as np
 import os
+import numpyencoder
+from numpyencoder import NumpyEncoder
 
 
 def getVideoLocation(videoName):
@@ -18,7 +22,7 @@ def rescaleFrame(frame, scale):
 
 def encode(filmName,videoName,resolutionMulti,fpsMulti,packetSize):
 
-    videoLocation = r"C:\Users\leand\Desktop\Newfolder\karaoke.mp4"
+    videoLocation = r"/workspaces/Glass/PackageDataStorage-master/Videos/Glass.mp4"
 
     videoCapture = cv.VideoCapture(videoLocation)
 
@@ -71,7 +75,7 @@ def encode(filmName,videoName,resolutionMulti,fpsMulti,packetSize):
 
     os.makedirs(storageFolder)
 
-    
+
     while True:
 
         success, frame = videoCapture.read()
@@ -84,7 +88,29 @@ def encode(filmName,videoName,resolutionMulti,fpsMulti,packetSize):
 
             frame = rescaleFrame(frame,resolutionMulti)
 
-            jsonPixelData = json.dumps(frame.tolist())
+            row,col,_ = frame.shape
+
+            colTable = []
+
+            for colI in range(col):
+
+                rowTable = []
+
+                for rowI in range(row):
+                    
+                    colorData = frame[rowI][colI]
+                    colorData = list(colorData)
+          
+                    for i,colorValue in enumerate(colorData): colorData[i] = np.int16(colorValue)# allows json to sterilise
+
+                    rowTable.append([colorData[2],colorData[1],colorData[0]] ) 
+
+                colTable.append(rowTable)
+
+            
+            
+            
+            jsonPixelData = json.dumps(colTable, default=str)
 
             lastPacket = (scaledFrameIterations + 1) >= scaledFrames
 
@@ -124,8 +150,8 @@ def encode(filmName,videoName,resolutionMulti,fpsMulti,packetSize):
         
     
 
-    videoCapture.release()
-    cv.destroyAllWindows()
+    videoCapture.release() #COMMENT THIS LINE AFTER FOR THE CONFIG FILE
+    cv.destroyAllWindows() #COMMENT THIS LINE OUT FOR THE CONFIG FILE, PUSH CONFIG AFTER GETTING PACKETS.
 
     if scaledFrames != scaledFrameIterations:
         print(f"Frame Estimation Error. Predited:{str(scaledFrames)}, Actual:{str(scaledFrameIterations)}")
