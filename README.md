@@ -1,4 +1,5 @@
 pip uninstall opencv-python #get rid of regular opencv, won't work with encoder.
+
 pip install opencv-python-headless #install THIS, this is the one you want.
 
 Go into encoder and find videolocation, replace videoLocation = r"VIDEOPATHHERE"
